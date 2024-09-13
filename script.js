@@ -1,4 +1,5 @@
 import StaticArray from "./StaticArray.js";
+import { SingleLinkedList } from "./singlelinkedlist.js";
 
 window.addEventListener("load", start);
 
@@ -34,12 +35,12 @@ function resetGame() {
 // **************************************
 
 // the list of enemies is an array of size 5 - but it could be larger ...
-const enemies = new StaticArray(5); 
+const enemies = new SingleLinkedList();
 
 function createInitialEnemies() {
  // create five enemies
   for (let i = 0; i < 5; i++) {
-    enemies[i] = spawnNewEnemy();
+    spawnNewEnemy();
   }
 }
 
@@ -47,20 +48,20 @@ function createInitialEnemies() {
 function spawnNewEnemy() {
   const enemy = createEnemy();
   // TODO: need to add new enemy to list of enemies, here!
-  
-  return enemy;
+  enemies.add(enemy);
 }
 
 // removes an enemy object from the list of enemies
 function removeEnemy(enemy) {
   // TODO: need to find enemy object in list of enemies, and remove it
+  enemies.remove(enemy)
   
 }
 
 // returns the number of enemy objects in the list of enemies
 function numberOfEnemies() {
   // TODO: need to return the number of actual enemies, not the size of the array
-  return enemies.length;
+  return enemies.size();
 }
 
 // ************************************************
@@ -165,8 +166,11 @@ function loop() {
   // ****
   // Loop through all enemies - and move them until the reach the bottom
   // ****
-  for (const enemy of enemies) {
-    // TODO: Only look at actual enemy objects from the list ...
+  let enemyNode = enemies.getFirstNode();
+  while (enemyNode) {
+    let enemy = enemyNode.data;
+    
+  
 
     // ignore enemies who are dying or crashing - so they don't move any further
     if (!enemy.isFrozen) {
@@ -176,7 +180,9 @@ function loop() {
         enemyHitBottom(enemy);
       }
     }
+    enemyNode = enemyNode.next 
   }
+  
 
   // Check for game over
   if (health <= 0) {
@@ -193,11 +199,13 @@ function loop() {
   // ****
   // Loop through all enemies - and update their visuals
   // ****
-  for (const enemy of enemies) {
+  enemyNode = enemies.getFirstNode();
+  while (enemyNode) {
     // TODO: Only do this for actual enemy objects from the list ...
-    displayEnemy(enemy);
+    displayEnemy(enemyNode.data);
+    enemyNode = enemyNode.next
+  
   }
-
   // update health display
   displayHealth();
 
@@ -205,6 +213,7 @@ function loop() {
   if (gameRunning) {
     requestAnimationFrame(loop);
   }
+
 }
 
 function enemyHitBottom(enemy) {
